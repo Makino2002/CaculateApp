@@ -1,0 +1,95 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #ffffff;
+}
+
+.App {
+  padding: 10px 1px 11px;
+  width: 321px;
+  height: 483px;
+  background-color: #5a5152;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.calculator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.calculator-display {
+  width: 280px;
+  height: 69;
+  text-align: right;
+  overflow-x: auto;
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  background-color: #5a5152;
+}
+
+.calculator-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+}
+
+.button {
+  height: 76px;
+  width: 79px;
+  font-size: 30px;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.zero {
+  border-radius: 0 0 0 15px;
+  width: 160px;
+  grid-column: span 2;
+}
+
+.number {
+  background-color: #837c7c;
+}
+
+.operator {
+  background-color: #fc9d2a;
+}
+
+.other {
+  background-color: #6a6263;
+}
+
+.equal {
+  border-radius: 0 0 15px 0;
+}
+
+.icon {
+  display: inline;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 100px;
+  margin: 5px;
+}
+.icon.Red {
+  margin-left: 15px;
+  background-color: #fb5f5b;
+}
+.icon.Yellow {
+  background-color: #fbba3f;
+}
+.icon.Blue {
+  background-color: #33c547;
+}/*# sourceMappingURL=index.css.map */

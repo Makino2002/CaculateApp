@@ -1,0 +1,106 @@
+// Variables
+$background: #5a5152;
+$number-button: #837c7c;
+$operator-button: #fc9d2a;
+$other-button: #6a6263;
+$white: #ffffff;
+$button-width: 79px;
+$button-height: 76px;
+
+// Global styles
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: $white;
+}
+
+.App {
+  padding: 10px 1px 11px;
+  width: 321px;
+  height: 483px;
+  background-color: $background;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.calculator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+// Button styles
+.calculator-display {
+  width: 280px;
+  height: 69;
+  text-align: right;
+  overflow-x: auto;
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: $white;
+  border: none;
+  border-radius: 10px;
+  background-color: $background;
+}
+
+.calculator-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+}
+
+.button {
+  height: $button-height;
+  width: $button-width;
+  font-size: 30px;
+  border: none;
+  cursor: pointer;
+  color: $white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+.zero {
+  border-radius: 0 0 0 15px;
+  width: calc(160px);
+  grid-column: span 2;
+}
+.number {
+  background-color: $number-button;
+}
+
+.operator {
+  background-color: $operator-button;
+}
+
+.other {
+  background-color: $other-button;
+}
+
+.equal {
+  border-radius: 0 0 15px 0;
+}
+
+// Icon styles
+.icon {
+  display: inline;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 100px;
+  margin: 5px;
+
+  &.Red {
+    margin-left: 15px;
+    background-color: #fb5f5b;
+  }
+
+  &.Yellow {
+    background-color: #fbba3f;
+  }
+
+  &.Blue {
+    background-color: #33c547;
+  }
+}
