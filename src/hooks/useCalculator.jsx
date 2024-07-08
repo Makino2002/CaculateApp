@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import CalculatorAPI from "../api/CalculatorAPI";
+import Big from "big.js";
 
 const useCalculator = () => {
   const [display, setDisplay] = useState("0");
   const [history, setHistory] = useState(CalculatorAPI.getHistory());
   const [operator, setOperator] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [isOperatorEntered, setIsOperatorEntered] = useState(false); // Track if an operator has been entered
-
+  const [dem, setDem] = useState(0);
+  const [isOperatorEntered, setIsOperatorEntered] = useState(false);
+  const [canEnterDot, setCanEnterDot] = useState(true);
   const handleButtonClick = (value) => {
+    if (dem >= 9 && value !== "AC" && value !== "=") return;
     if (value === "AC") {
       resetCalculator();
     } else if (value === "+/-") {
@@ -16,33 +19,53 @@ const useCalculator = () => {
     } else if (value === "%") {
       calculatePercentage();
     } else if (value === "=") {
-      evaluateExpression();
+      if (!isOperatorEntered) {
+        setIsOperatorEntered(true);
+        evaluateExpression();
+      }
+      setDem(0); // Reset character count after evaluation
     } else if (["÷", "✕", "-", "+"].includes(value)) {
-      // Only add the operator if one has not already been entered
       if (!isOperatorEntered) {
         setOperator(value);
         setDisplay((prev) => prev + value);
         setIsOperatorEntered(true);
+        setDem(dem + 1);
+        setCanEnterDot(true);
+      }
+    } else if (value === ".") {
+      if (canEnterDot && !isOperatorEntered) {
+        setDisplay((prev) => prev + value);
+        setCanEnterDot(false); // Không cho phép nhập dấu chấm lần nữa cho đến khi nhập số hoặc toán tử mới
+        setDem(dem + 1);
+        setIsOperatorEntered(true);
       }
     } else {
-      // Clear the previous result if a new number is entered after "="
       if (display === "0" && value !== ".") {
         setDisplay(String(value));
+        setDem(1); // Reset character count if the first number is entered
+        setCanEnterDot(true);
       } else {
+        setIsOperatorEntered(false);
         setDisplay((prev) => prev + String(value));
+        setDem(dem + 1);
       }
-      setIsOperatorEntered(false); // Reset operator tracking if a number is entered
     }
   };
 
   const handleInputChange = (event) => {
-    setDisplay(event.target.value);
+    const inputValue = event.target.value;
+    if (inputValue.length <= 9) {
+      setDisplay(inputValue);
+      setDem(inputValue.length);
+    }
   };
 
   const resetCalculator = () => {
     setDisplay("0");
     setOperator("");
-    setIsOperatorEntered(false); // Reset operator tracking
+    setIsOperatorEntered(false);
+    setCanEnterDot(true);
+    setDem(0);
   };
 
   const toggleSign = () => {
@@ -50,47 +73,55 @@ const useCalculator = () => {
   };
 
   const calculatePercentage = () => {
-    setDisplay((prev) => String(parseFloat(prev) / 100));
+    setDisplay((prev) => {
+      const bigValue = new Big(prev);
+      return bigValue.div(100).toString();
+    });
   };
-
   const evaluateExpression = () => {
     try {
-      // Replace symbols with JavaScript operators
       const sanitizedDisplay = display.replace(/÷/g, "/").replace(/✕/g, "*");
-
-      // Validate the input before evaluation
       if (!/^[\d+\-*/.() ]+$/.test(sanitizedDisplay)) {
         throw new Error("Invalid characters in expression");
       }
-
-      // Check if the input is a simple number
-      if (!isNaN(sanitizedDisplay)) {
-        const result = parseFloat(sanitizedDisplay);
-        const entry = `${display} = ${result}`;
-        setHistory((prev) => [...prev, entry]);
-        setDisplay(String(result));
-        CalculatorAPI.addHistory(entry);
-        return;
-      }
-
-      // Evaluate the expression safely
       const result = safeEvaluate(sanitizedDisplay);
       const entry = `${display} = ${result}`;
       setHistory((prev) => [...prev, entry]);
       setDisplay(String(result));
       CalculatorAPI.addHistory(entry);
-      setIsOperatorEntered(false); // Allow new operator entry after evaluation
+      setIsOperatorEntered(false);
     } catch (error) {
       setDisplay("Error");
       console.error("Error evaluating expression:", error);
     }
   };
 
-  // Safe evaluation function to replace `eval`
   const safeEvaluate = (expression) => {
     try {
-      // Use Function constructor for safer evaluation
-      return Function('"use strict"; return (' + expression + ")")();
+      const operands = expression.split(/([+\-*/])/).filter(Boolean);
+      let bigResult = new Big(operands[0]);
+      for (let i = 1; i < operands.length; i += 2) {
+        const operator = operands[i];
+        const operand = new Big(operands[i + 1]);
+
+        switch (operator) {
+          case "+":
+            bigResult = bigResult.plus(operand);
+            break;
+          case "-":
+            bigResult = bigResult.minus(operand);
+            break;
+          case "*":
+            bigResult = bigResult.times(operand);
+            break;
+          case "/":
+            bigResult = bigResult.div(operand);
+            break;
+          default:
+            throw new Error("Invalid operator");
+        }
+      }
+      return bigResult.toString();
     } catch {
       throw new Error("Invalid expression");
     }
@@ -111,4 +142,5 @@ const useCalculator = () => {
     setIsEditing,
   };
 };
+
 export default useCalculator;

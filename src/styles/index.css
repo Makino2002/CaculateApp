@@ -8,9 +8,9 @@ body {
 }
 
 .App {
-  padding: 10px 1px 11px;
-  width: 321px;
-  height: 483px;
+  padding: 10px 3px 28px;
+  width: 322px;
+  height: 484px;
   background-color: #5a5152;
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
@@ -25,12 +25,12 @@ body {
 }
 
 .calculator-display {
-  width: 280px;
-  height: 69;
+  width: 282px;
+  height: 70px;
   text-align: right;
   overflow-x: auto;
   font-size: 3em;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -39,23 +39,24 @@ body {
 
 .calculator-buttons {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  padding: 0px;
+  grid-template-columns: repeat(4, 5.1rem);
+  grid-template-rows: minmax(1rem, auto) repeat(5, 4.95rem);
   gap: 1px;
 }
 
 .button {
-  height: 76px;
-  width: 79px;
+  height: 78px;
+  width: 80px;
   font-size: 30px;
   border: none;
   cursor: pointer;
   color: #ffffff;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .zero {
   border-radius: 0 0 0 15px;
-  width: 160px;
+  width: 163px;
   grid-column: span 2;
 }
 
