@@ -63,7 +63,7 @@ const Calculator = () => {
                 : "other"
             }
             label={btn}
-            onClick={handleButtonClick}
+            onClick={() => handleButtonClick(btn)}
           />
         ))}
       </div>
