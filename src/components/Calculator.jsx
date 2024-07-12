@@ -52,8 +52,10 @@ const Calculator = () => {
                 ? "zero number"
                 : typeof btn === "number"
                 ? "number"
-                : ["+", "-", "✕", "÷"].includes(btn)
+                : ["+", "-", "÷"].includes(btn)
                 ? "operator"
+                : btn === "✕"
+                ? "mul operator"
                 : btn === "="
                 ? "equal operator"
                 : btn === "."
