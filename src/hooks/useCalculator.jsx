@@ -26,11 +26,12 @@ const useCalculator = () => {
   const [dem, setDem] = useState(0);
   const [isOperatorEntered, setIsOperatorEntered] = useState(false);
   const [canEnterDot, setCanEnterDot] = useState(true);
+  const [hasEvaluated, setHasEvaluated] = useState(false); // State to track if "=" has been pressed
 
   const handleButtonClick = (value) => {
     if (dem >= 9 && value !== "AC" && value !== "=") return;
     if (value === "AC") {
-      resetCalculator();
+      resetCalculator("0");
     } else if (value === "+/-") {
       toggleSign();
     } else if (value === "%") {
@@ -39,6 +40,7 @@ const useCalculator = () => {
       if (!isOperatorEntered) {
         setIsOperatorEntered(true);
         evaluateExpression();
+        setHasEvaluated(true); // Set to true after evaluation
       }
       setDem(0); // Reset character count after evaluation
     } else if (["÷", "✕", "-", "+"].includes(value)) {
@@ -50,15 +52,20 @@ const useCalculator = () => {
         setOperator(value);
         setDisplay((prev) => prev + value);
       }
+      if (hasEvaluated) {
+        resetCalculator("0"); // Reset the calculation
+      }
       setIsOperatorEntered(true);
       setDem(dem + 1);
       setCanEnterDot(true);
+      setHasEvaluated(false); // Reset after operator input
     } else if (value === ".") {
       if (canEnterDot && !isOperatorEntered) {
         setDisplay((prev) => prev + value);
         setCanEnterDot(false); // Không cho phép nhập dấu chấm lần nữa cho đến khi nhập số hoặc toán tử mới
         setDem(dem + 1);
         setIsOperatorEntered(true);
+        setHasEvaluated(false); // Reset after dot input
       }
     } else {
       if (display === "0" && value !== ".") {
@@ -66,6 +73,11 @@ const useCalculator = () => {
         setDem(1); // Reset character count if the first number is entered
         setCanEnterDot(true);
       } else {
+        if (hasEvaluated && !isOperatorEntered) {
+          // Reset calculator state after evaluation
+          resetCalculator("");
+          setHasEvaluated(false); // Reset hasEvaluated state
+        }
         setIsOperatorEntered(false);
         setDisplay((prev) => prev + String(value));
         setDem(dem + 1);
@@ -91,14 +103,13 @@ const useCalculator = () => {
     }
   };
 
-  const resetCalculator = () => {
-    setDisplay("0");
+  const resetCalculator = (value) => {
+    setDisplay(value);
     setOperator("");
     setIsOperatorEntered(false);
     setCanEnterDot(true);
     setDem(0);
   };
-
   const toggleSign = () => {
     setDisplay((prev) => {
       const currentValue = -1.0 * parseFloat(prev);
@@ -122,13 +133,21 @@ const useCalculator = () => {
       if (!/^[\d+\-*/.() ]+$/.test(sanitizedDisplay)) {
         throw new Error("Invalid characters in expression");
       }
-      const result = safeEvaluate(sanitizedDisplay);
+      let result = safeEvaluate(sanitizedDisplay);
 
       // Only add to history if the expression contains an operator
       if (/[\+\-\*/]/.test(sanitizedDisplay)) {
         const entry = `${display} = ${result}`;
         setHistory((prev) => [...prev, entry]);
         CalculatorAPI.addHistory(entry);
+      }
+
+      // Convert result to scientific notation if it exceeds 9 characters
+      console.log(result);
+      console.log(result.length);
+
+      if (result.length > 9) {
+        result = new Big(result).toExponential(2).toString();
       }
 
       setDisplay(String(result));
