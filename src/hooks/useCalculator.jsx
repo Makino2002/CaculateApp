@@ -27,6 +27,7 @@ const useCalculator = () => {
   const [isOperatorEntered, setIsOperatorEntered] = useState(false);
   const [canEnterDot, setCanEnterDot] = useState(true);
   const [hasEvaluated, setHasEvaluated] = useState(false); // State to track if "=" has been pressed
+  const [neg, setNeg] = useState(true); //
 
   const handleButtonClick = (value) => {
     if (dem >= 9 && value !== "AC" && value !== "=") return;
@@ -35,16 +36,30 @@ const useCalculator = () => {
     } else if (value === "+/-") {
       toggleSign();
     } else if (value === "%") {
-      calculatePercentage();
-    } else if (value === "=") {
       if (!isOperatorEntered) {
+        calculatePercentage();
+      } else {
+        resetCalculator("0");
+      }
+    } else if (value === "=") {
+      if (!neg) {
+        setDisplay("ERROR");
+        setNeg(true);
+      } else if (!isOperatorEntered) {
         setIsOperatorEntered(true);
         evaluateExpression();
         setHasEvaluated(true); // Set to true after evaluation
+      } else {
+        resetCalculator("0");
       }
       setDem(0); // Reset character count after evaluation
     } else if (["÷", "✕", "-", "+"].includes(value)) {
       const endsWithOperator = ["÷", "✕", "-", "+"].includes(display.slice(-1));
+      if (value === "÷") {
+        setNeg(false);
+      }
+      console.log(neg);
+
       if (endsWithOperator) {
         setDisplay((prev) => prev.slice(0, -1) + value); // Replace the last operator
         setOperator(value); // Update the current operator state
@@ -52,9 +67,7 @@ const useCalculator = () => {
         setOperator(value);
         setDisplay((prev) => prev + value);
       }
-      if (hasEvaluated) {
-        resetCalculator("0"); // Reset the calculation
-      }
+
       setIsOperatorEntered(true);
       setDem(dem + 1);
       setCanEnterDot(true);
