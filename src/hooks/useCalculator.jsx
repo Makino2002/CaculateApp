@@ -534,7 +534,6 @@ const useCalculator = () => {
   const [lastValue, setLastValue] = useState(null); // Store the last entered value
 
   const handleButtonClick = (value) => {
-    if (dem >= 9 && value !== "AC" && value !== "=") return;
     if (value === "AC") {
       resetCalculator("0");
     } else if (value === "+/-") {
@@ -600,15 +599,11 @@ const useCalculator = () => {
       if (endsWithOperator) {
         // Handle cases like "8+%"
         const operatorIndex = prev.length - 1;
-        console.log(operatorIndex);
-
         const numberBeforeOperator = prev.slice(0, operatorIndex);
-        console.log(numberBeforeOperator);
-
         const bigValue = new Big(numberBeforeOperator);
-        console.log(bigValue);
-        const percentageValue = bigValue.times(0.08).toString();
-        console.log(percentageValue);
+        const percentageValue = bigValue
+          .times(numberBeforeOperator / 100)
+          .toString();
         return numberBeforeOperator + prev[operatorIndex] + percentageValue;
       } else {
         // Handle cases like "8%"
