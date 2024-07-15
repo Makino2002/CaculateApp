@@ -92,7 +92,18 @@ const useCalculator = () => {
         setIsOperatorEntered(true);
         setHasEvaluated(false); // Reset after dot input
       }
+      if (canEnterDot && isOperatorEntered) {
+        setDisplay((prev) => prev + value);
+        setCanEnterDot(false); // Không cho phép nhập dấu chấm lần nữa cho đến khi nhập số hoặc toán tử mới
+        setDem(dem + 1);
+        setIsOperatorEntered(true);
+        setHasEvaluated(false); // Reset after dot input
+      }
     } else {
+      if (hasEvaluated) {
+        resetCalculator("");
+        setHasEvaluated(false);
+      }
       if (resetErr) {
         resetCalculator("");
         setResetErr(false);
@@ -108,6 +119,34 @@ const useCalculator = () => {
     }
   };
 
+  // const handlePercentage = () => {
+  //   setDisplay((prev) => {
+  //     const endsWithOperator = ["÷", "✕", "-", "+"].includes(prev.slice(-1));
+  //     const lastChar = prev[prev.length - 1];
+  //     if (endsWithOperator) {
+  //       // Handle cases like "8+%"
+  //       const operatorIndex = prev.length - 1;
+  //       const numberBeforeOperator = prev.slice(0, operatorIndex);
+  //       const bigValue = new Big(numberBeforeOperator);
+  //       const percentageValue = bigValue
+  //         .times(numberBeforeOperator / 100)
+  //         .toString();
+  //       if (lastChar === "-" || lastChar === "+") {
+  //         const percentageValue = bigValue
+  //           .times(numberBeforeOperator / 100)
+  //           .toString();
+  //       }
+  //       if (lastChar === "✕" || lastChar === "÷") {
+  //         const percentageValue = bigValue.times(1 / 100).toString();
+  //       }
+  //       return numberBeforeOperator + prev[operatorIndex] + percentageValue;
+  //     } else {
+  //       // Handle cases like "8%"
+  //       const bigValue = new Big(prev);
+  //       return bigValue.div(100).toString();
+  //     }
+  //   });
+  // };
   const handlePercentage = () => {
     setDisplay((prev) => {
       const endsWithOperator = ["÷", "✕", "-", "+"].includes(prev.slice(-1));
@@ -148,12 +187,12 @@ const useCalculator = () => {
     let inputValue = event.target.value;
     inputValue = inputValue.replace(/,/g, ""); // Remove any existing commas for proper handling
 
-    if (inputValue.length <= 9) {
-      // Format the input value with thousands separator
-      const formattedValue = formatDisplay(inputValue);
-      setDisplay(formattedValue);
-      setDem(formattedValue.replace(/,/g, "").length); // Count characters excluding commas
-    }
+    // if (inputValue.length <= 9) {
+    //   // Format the input value with thousands separator
+    //   const formattedValue = formatDisplay(inputValue);
+    //   setDisplay(formattedValue);
+    //   setDem(formattedValue.replace(/,/g, "").length); // Count characters excluding commas
+    // }
   };
 
   const resetCalculator = (value) => {

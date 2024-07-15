@@ -2,7 +2,6 @@ import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 import Calculator from "../components/Calculator"; // Adjust the import to your file structure
 import "@testing-library/jest-dom/extend-expect";
-
 describe("Calculator", () => {
   test("UI Check", () => {
     const { container } = render(<Calculator />);
