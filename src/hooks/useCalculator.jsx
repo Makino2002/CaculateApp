@@ -111,15 +111,25 @@ const useCalculator = () => {
   const handlePercentage = () => {
     setDisplay((prev) => {
       const endsWithOperator = ["÷", "✕", "-", "+"].includes(prev.slice(-1));
+      const lastChar = prev[prev.length - 1];
+      console.log(lastChar);
       if (endsWithOperator) {
         // Handle cases like "8+%"
         const operatorIndex = prev.length - 1;
         const numberBeforeOperator = prev.slice(0, operatorIndex);
         const bigValue = new Big(numberBeforeOperator);
-        const percentageValue = bigValue
-          .times(numberBeforeOperator / 100)
-          .toString();
-        return numberBeforeOperator + prev[operatorIndex] + percentageValue;
+
+        // return numberBeforeOperator + prev[operatorIndex] + percentageValue;
+        if (lastChar === "+" || lastChar === "-") {
+          const percentageValue = bigValue
+            .times(numberBeforeOperator / 100)
+            .toString();
+          return numberBeforeOperator + prev[operatorIndex] + percentageValue;
+        }
+        if (lastChar === "✕" || lastChar === "÷") {
+          const percentageValue = bigValue.times(1 / 100).toString();
+          return numberBeforeOperator + prev[operatorIndex] + percentageValue;
+        }
       } else {
         // Handle cases like "8%"
         const bigValue = new Big(prev);
@@ -138,12 +148,12 @@ const useCalculator = () => {
     let inputValue = event.target.value;
     inputValue = inputValue.replace(/,/g, ""); // Remove any existing commas for proper handling
 
-    // if (inputValue.length <= 9) {
-    //   // Format the input value with thousands separator
-    //   const formattedValue = formatDisplay(inputValue);
-    //   setDisplay(formattedValue);
-    //   setDem(formattedValue.replace(/,/g, "").length); // Count characters excluding commas
-    // }
+    if (inputValue.length <= 9) {
+      // Format the input value with thousands separator
+      const formattedValue = formatDisplay(inputValue);
+      setDisplay(formattedValue);
+      setDem(formattedValue.replace(/,/g, "").length); // Count characters excluding commas
+    }
   };
 
   const resetCalculator = (value) => {
